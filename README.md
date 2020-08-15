@@ -1,13 +1,13 @@
 # Create/Launch Application On AWS Cloud Using Terraform
 # what we have to do.
-1.Create the key and security group which allows the port 80.
+1. Create the key and security group which allows the port 80.
 2. Launch EC2 instance.
 3. In this Ec2 instance use the key and security group which we have created in step 1.
 4. Launch one Volume (EBS) and mount that volume into /var/www/html
 5. Developer has uploaded the code into GitHub repo also the repo has some images.
 6. Copy the GitHub repo code into /var/www/html
 7. Create an S3 bucket, and copy/deploy the images from GitHub repo into the s3 bucket and change the permission to public readable.
-8 Create a Cloudfront using s3 bucket(which contains images) and use the Cloudfront URL to  update in code in /var/www/html
+8. Create a Cloudfront using s3 bucket(which contains images) and use the Cloudfront URL to  update in code in /var/www/html
 
  Let's start,
 First of all, create an IAM user in your AWS account and then configure it by using the command.
