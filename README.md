@@ -1,4 +1,5 @@
 # Create/Launch Application On AWS Cloud Using Terraform
+Medium article [ click here](https://medium.com/@abhimanyuk479810/create-launch-application-on-aws-cloud-d5475a7629f2)
 # what we have to do.
 1. Create the key and security group which allows the port 80.
 2. Launch EC2 instance.
@@ -12,7 +13,7 @@
 ## Let's start,</br>
 First of all, create an IAM user in your AWS account and then configure it by using the command.</br>
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*W-lvbwYQepMpszvWleTsPg.png "Optional title")
 
 # STEP  TO COMPLETE THE TASK
 
@@ -36,7 +37,7 @@ resource "aws_key_pair" "mygenerate_key"{</br>
 key_name = "mykey"</br>
 public_key = tls_private_key.task1_key.public_key_openssh</br>
 }</br>
-
+![creating IAM user](https://miro.medium.com/max/875/1*w8-SpK7uByK55_zTfeSk1Q.png "Optional title")
 
 
 
@@ -67,7 +68,7 @@ cidr_blocks = ["0.0.0.0/0"]</br>
 }</br>
 }</br>
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*seYaoeartKgwY7PytlIBDw.png "Optional title")
 
 # 4. In the EC2 instance use the key and security group which we have created with automatic login into the instance and download the httpd and git.
 variable "ami_id" {</br>
@@ -103,7 +104,7 @@ Name = "task1 myos"</br>
 }</br>
 }</br>
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*bJ0KvJsiK9QyT4ybc8GjKg.png "Optional title")
 
 # 5.Create EBS volume
 resource "aws_ebs_volume" "myvolume" {</br>
@@ -115,7 +116,7 @@ Name = "ebsvol"</br>
 }</br>
 }</br>
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*P3ds7i2SlVVhSnJjQM_fMQ.png"Optional title")
 
 
 # 6.Attaching created volume to existing ec2 instance
@@ -126,7 +127,7 @@ instance_id = aws_instance.myos.id</br>
 force_detach = true</br>
 }</br>
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*6VssC5nB_yiYy9aWVGFceg.png "Optional title")
 
 
 # 7. Mount the volume
@@ -172,7 +173,7 @@ s3_origin_id = "myS3origin"</br>
 
 
 
-
+![creating IAM user](https://miro.medium.com/max/875/1*CSTvwUBYpNP4npeODwaQVQ.png "Optional title")
 
 
 
@@ -197,6 +198,9 @@ content_type = "image or png"</br>
 }</br>
 
 
+
+
+![creating IAM user](https://miro.medium.com/max/875/1*bN0EsPNRTsZ4gc0wDZuIVw.png "Optional title")
 
 
   
@@ -279,17 +283,23 @@ inline = [</br>
 output "myosip" {</br>
 value = aws_instance.myos.public_ip</br>
 }</br>
+ 
+![creating IAM user](https://miro.medium.com/max/875/1*1JVRdB8p2Ov69_7qG7W6tQ.png "Optional title")
 
 
 
 # 11. Save all the code in one file and run the following command
 terraform initterraform validateterraform apply -auto-approve</br>
 
+![creating IAM user](https://miro.medium.com/max/875/1*ZZjrMtldQXNZJgd-tFr0oA.png "Optional title")
+
+![creating IAM user](https://miro.medium.com/max/875/1*A4ovLGXkJSni7aK5XoXmLw.png "Optional title")
+
 
 
 
 # 12. After apply completed successfully we get own desire web server
+![creating IAM user](https://miro.medium.com/max/875/1*_bpXYUsz2JT01LgQOpAOyQ.png "Optional title")
 
-
-
-That's all about how to launch Application on AWS using Terraform, feel free to give the feedback.</br>
+### That's all about how to launch Application on AWS using Terraform, feel free to give the feedback.</br>
+## _Medium article [ click here](https://medium.com/@abhimanyuk479810/create-launch-application-on-aws-cloud-d5475a7629f2)_
