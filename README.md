@@ -9,166 +9,166 @@
 7. Create an S3 bucket, and copy/deploy the images from GitHub repo into the s3 bucket and change the permission to public readable.
 8. Create a Cloudfront using s3 bucket(which contains images) and use the Cloudfront URL to  update in code in /var/www/html
 
- Let's start,
-First of all, create an IAM user in your AWS account and then configure it by using the command.
+## Let's start,</br>
+First of all, create an IAM user in your AWS account and then configure it by using the command.</br>
 
 
 
 # STEP  TO COMPLETE THE TASK
 
 # 1. Verify the provider as AWS with profile and region
-provider "aws" {
-region = "ap-south-1"
-profile = "abhimanyu"
-}
+provider "aws" {</br>
+region = "ap-south-1"</br>
+profile = "abhimanyu"</br>
+}</br>
 
  # 2. Create the key pair and save it to use for the instance login
-resource "tls_private_key" "task1_key"{
-algorithm = "RSA"
-}
+resource "tls_private_key" "task1_key"{</br>
+algorithm = "RSA"</br>
+}</br>
 
-resource "local_file" "mykey_file"{
-content = tls_private_key.task1_key.private_key_pem
-filename = "mykey.pem"
-}
+resource "local_file" "mykey_file"{</br>
+content = tls_private_key.task1_key.private_key_pem</br>
+filename = "mykey.pem"</br>
+}</br>
 
-resource "aws_key_pair" "mygenerate_key"{
-key_name = "mykey"
-public_key = tls_private_key.task1_key.public_key_openssh
-}
+resource "aws_key_pair" "mygenerate_key"{</br>
+key_name = "mykey"</br>
+public_key = tls_private_key.task1_key.public_key_openssh</br>
+}</br>
 
 
 
 
  # 3. Create a security group allowing port 22 for ssh login and allowing port 80 for  HTTP protocol.
-resource "aws_security_group" "task1_securitygroup" {
-name = "task1_securitygroup"
-description = "Allow http and ssh traffic"
+resource "aws_security_group" "task1_securitygroup" {</br>
+name = "task1_securitygroup"</br>
+description = "Allow http and ssh traffic"</br>
 
-ingress {
-from_port = 22
-to_port = 22
-protocol = "tcp"
-cidr_blocks = ["0.0.0.0/0"]
-}
+ingress {</br>
+from_port = 22</br>
+to_port = 22</br>
+protocol = "tcp"</br>
+cidr_blocks = ["0.0.0.0/0"]</br>
+}</br>
 
-ingress {
-from_port = 80
-to_port = 80
-protocol = "tcp"
-cidr_blocks = ["0.0.0.0/0"]
-}
+ingress {</br>
+from_port = 80</br>
+to_port = 80</br>
+protocol = "tcp"</br>
+cidr_blocks = ["0.0.0.0/0"]</br>
+}</br>
 
-egress {
-from_port = 0
-to_port = 0
-protocol = "-1"
-cidr_blocks = ["0.0.0.0/0"]
-}
-}
+egress {</br>
+from_port = 0</br>
+to_port = 0</br>
+protocol = "-1"</br>
+cidr_blocks = ["0.0.0.0/0"]</br>
+}</br>
+}</br>
 
 
 
 # 4. In the EC2 instance use the key and security group which we have created with automatic login into the instance and download the httpd and git.
-variable "ami_id" {
-default = "ami-052c08d70def0ac62"
-}
+variable "ami_id" {</br>
+default = "ami-052c08d70def0ac62"</br>
+}</br>
 
-resource "aws_instance" "myos" {
-ami = var .ami_id
-instance_type = "t2.micro"
-key_name = aws_key_pair.mygenerate_key.key_name
-security_groups = [aws_security_group.task1_securitygroup.name]
-vpc_security_group_ids = [aws_security_group.task1_securitygroup.id]
+resource "aws_instance" "myos" {</br>
+ami = var .ami_id</br>
+instance_type = "t2.micro"</br>
+key_name = aws_key_pair.mygenerate_key.key_name</br>
+security_groups = [aws_security_group.task1_securitygroup.name]</br>
+vpc_security_group_ids = [aws_security_group.task1_securitygroup.id]</br>
 
-connection {
-type = "ssh"
-user = "ec2-user"
-private_key = tls_private_key.task1_key.private_key_pem
-port = 22
-host = aws_instance.myos.public_ip
-}
+connection {</br>
+type = "ssh"</br>
+user = "ec2-user"</br>
+private_key = tls_private_key.task1_key.private_key_pem</br>
+port = 22</br>
+host = aws_instance.myos.public_ip</br>
+}</br>
 
-provisioner "remote-exec" {
-inline = [
-"sudo yum install httpd -y",
-"sudo systemctl start httpd",
-"sudo systemctl enable httpd",
-"sudo yum install git -y"
-]
-}
+provisioner "remote-exec" {</br>
+inline = [</br>
+"sudo yum install httpd -y",</br>
+"sudo systemctl start httpd",</br>
+"sudo systemctl enable httpd",</br>
+"sudo yum install git -y"</br>
+]</br>
+}</br>
 
-tags = {
-Name = "task1 myos"
-}
-}
+tags = {</br>
+Name = "task1 myos"</br>
+}</br>
+}</br>
 
 
 
 # 5.Create EBS volume
-resource "aws_ebs_volume" "myvolume" {
-availability_zone = aws_instance.myos.availability_zone
-size = 1
+resource "aws_ebs_volume" "myvolume" {</br>
+availability_zone = aws_instance.myos.availability_zone</br>
+size = 1</br>
 
-tags = {
-Name = "ebsvol"
-}
-}
+tags = {</br>
+Name = "ebsvol"</br>
+}</br>
+}</br>
 
 
 
 
 # 6.Attaching created volume to existing ec2 instance
-resource "aws_volume_attachment" "ebs_att" {
-device_name = "/dev/sdh"
-volume_id = aws_ebs_volume.myvolume.id
-instance_id = aws_instance.myos.id
-force_detach = true
-}
+resource "aws_volume_attachment" "ebs_att" {</br>
+device_name = "/dev/sdh"</br>
+volume_id = aws_ebs_volume.myvolume.id</br>
+instance_id = aws_instance.myos.id</br>
+force_detach = true</br>
+}</br>
 
 
 
 
 # 7. Mount the volume
-resource "null_resource" "partition_and_mount" {
-depends_on = [
-aws_volume_attachment.ebs_att,
-]
+resource "null_resource" "partition_and_mount" {</br>
+depends_on = [</br>
+aws_volume_attachment.ebs_att,</br>
+]</br>
 
 
-connection {
-type = "ssh"
-user = "ec2-user"
-private_key = tls_private_key.task1_key.private_key_pem
-host = aws_instance.myos.public_ip
-}
+connection {</br>
+type = "ssh"</br>
+user = "ec2-user"</br>
+private_key = tls_private_key.task1_key.private_key_pem</br>
+host = aws_instance.myos.public_ip</br>
+}</br>
 
 
-provisioner "remote-exec" {
-inline = [
-"sudo mkfs.ext4 /dev/xvdh",
-"sudo mount /dev/xvdh /var/www/html",
-"sudo rm -rf /var/www/html/*",
-"sudo git clone https://github.com/abhimanyuk479810/multicloud.git /var/www/html/",
-"sudo setenforce 0"
-]
-}
-}
+provisioner "remote-exec" {</br>
+inline = [</br>
+"sudo mkfs.ext4 /dev/xvdh",</br>
+"sudo mount /dev/xvdh /var/www/html",</br>
+"sudo rm -rf /var/www/html/*",</br>
+"sudo git clone https://github.com/abhimanyuk479810/multicloud.git /var/www/html/",</br>
+"sudo setenforce 0"</br>
+]</br>
+}</br>
+}</br>
 
 # 8.Creating an S3 bucket and make it public readable
-resource "aws_s3_bucket" "mybucket1" {
-bucket = "abhimanyu0413"
-acl = "public-read"
+resource "aws_s3_bucket" "mybucket1" {</br>
+bucket = "abhimanyu0413"</br>
+acl = "public-read"</br>
 
-tags = {
-Name = "taskbucket"
-}
-}
+tags = {</br>
+Name = "taskbucket"</br>
+}</br>
+}</br>
 
-locals {
+locals {</br>
 
-s3_origin_id = "myS3origin"
-}
+s3_origin_id = "myS3origin"</br>
+}</br>
 
 
 
@@ -188,103 +188,102 @@ s3_origin_id = "myS3origin"
 
 
 # 9. Upload the image in this s3 bucket.
-resource "aws_s3_bucket_object" "object" {
-bucket = aws_s3_bucket.mybucket1.id
-key = "logo-via-logohub.png"
-source = "C:/Users/abhimanyu/Downloads/logo-via-logohub.png"
-acl = "public-read"
-content_type = "image or png"
-}
+resource "aws_s3_bucket_object" "object" {</br>
+bucket = aws_s3_bucket.mybucket1.id</br>
+key = "logo-via-logohub.png"</br>
+source = "C:/Users/abhimanyu/Downloads/logo-via-logohub.png"</br>
+acl = "public-read"</br>
+content_type = "image or png"</br>
+}</br>
 
 
 
 
   
 # 10. Creating CloudFront with S3 as origin to provide CDN(content delevery network)
-resource "aws_cloudfront_distribution" "s3_dist" {
-origin {
-domain_name = aws_s3_bucket.mybucket1.bucket_regional_domain_name
-origin_id = local.s3_origin_id
+resource "aws_cloudfront_distribution" "s3_dist" {</br>
+origin {</br>
+domain_name = aws_s3_bucket.mybucket1.bucket_regional_domain_name</br>
+origin_id = local.s3_origin_id</br>
 
 
-custom_origin_config {
-http_port = 80
-https_port = 80
-origin_protocol_policy = "match-viewer"
-origin_ssl_protocols = [ "TLSv1" , "TLSv1.1" , "TLSv1.2" ]
-}
-}
+custom_origin_config {</br>
+http_port = 80</br>
+https_port = 80</br>
+origin_protocol_policy = "match-viewer"</br>
+origin_ssl_protocols = [ "TLSv1" , "TLSv1.1" , "TLSv1.2" ]</br>
+}</br>
+}</br>
 
-enabled = true
+enabled = true</br>
 
-default_cache_behavior {
+default_cache_behavior {</br>
 
-allowed_methods = [ "DELETE","GET","HEAD","OPTIONS","PATCH","POST","PUT" ]
-cached_methods = ["GET", "HEAD"]
-target_origin_id = local.s3_origin_id
-
-
-forwarded_values {
-query_string = false
-
-cookies {
-forward = "none"
-}
-}
-
-viewer_protocol_policy = "allow-all"
-min_ttl = 0
-default_ttl = 3600
-max_ttl = 86400
-
-}
-
-restrictions {
-geo_restriction {
-restriction_type = "none"
-}
-}
+allowed_methods = [ "DELETE","GET","HEAD","OPTIONS","PATCH","POST","PUT" ]</br>
+cached_methods = ["GET", "HEAD"]</br>
+target_origin_id = local.s3_origin_id</br>
 
 
-viewer_certificate {
-cloudfront_default_certificate = true
-}
-}
+forwarded_values {</br>
+query_string = false</br>
+
+cookies {</br>
+forward = "none"</br>
+}</br>
+}</br>
+
+viewer_protocol_policy = "allow-all"</br>
+min_ttl = 0</br>
+default_ttl = 3600</br>
+max_ttl = 86400</br>
+
+}</br>
+
+restrictions {</br>
+geo_restriction {</br>
+restriction_type = "none"</br>
+}</br>
+}</br>
 
 
-resource "null_resource" "image" {
-depends_on = [
-aws_instance.myos,
-aws_volume_attachment.ebs_att,
-aws_cloudfront_distribution.s3_dist
-]
+viewer_certificate {</br>
+cloudfront_default_certificate = true</br>
+}</br>
+}</br>
 
 
-connection {
-type = "ssh"
-user = "ec2-user"
-private_key = tls_private_key.task1_key.private_key_pem
-host = aws_instance.myos.public_ip
-}
+resource "null_resource" "image" {</br>
+depends_on = [</br>
+aws_instance.myos,</br>
+aws_volume_attachment.ebs_att,</br>
+aws_cloudfront_distribution.s3_dist</br>
+]</br>
+
+connection {</br>
+type = "ssh"</br>
+user = "ec2-user"</br>
+private_key = tls_private_key.task1_key.private_key_pem</br>
+host = aws_instance.myos.public_ip</br>
+}</br>
 
 
-provisioner "remote-exec" {
-inline = [
+provisioner "remote-exec" {</br>
+inline = [</br>
 
 
-" echo < 'img noSrc ='https://${aws_cloudfront_distribution.s3_dist.domain_name}/logo-via-logohub.png'>' | sudo tee -a /var/www/html/index.html"
-]
-}
-}
+" echo < 'img noSrc ='https://${aws_cloudfront_distribution.s3_dist.domain_name}/logo-via-logohub.png'>' | sudo tee -a /var/www/html/index.html"</br>
+]</br>
+}</br>
+}</br>
 
-output "myosip" {
-value = aws_instance.myos.public_ip
-}
+output "myosip" {</br>
+value = aws_instance.myos.public_ip</br>
+}</br>
 
 
 
 # 11. Save all the code in one file and run the following command
-terraform initterraform validateterraform apply -auto-approve
+terraform initterraform validateterraform apply -auto-approve</br>
 
 
 
@@ -293,4 +292,4 @@ terraform initterraform validateterraform apply -auto-approve
 
 
 
-That's all about how to launch Application on AWS using Terraform, feel free to give the feedback.
+That's all about how to launch Application on AWS using Terraform, feel free to give the feedback.</br>
